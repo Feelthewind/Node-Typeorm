@@ -4,11 +4,11 @@ block content
   .timeline
     .followings.half
       h2 팔로잉 목록
-      if user.Followings
-        for following in user.Followings
+      if user.followings
+        for following in user.followings
           div= following.nick
     .followers.half
       h2 팔로워 목록
-      if user.Followers
-        for follower in user.Followers
+      if user.followers
+        for follower in user.followers
           div= follower.nick

@@ -4,16 +4,23 @@ import { config } from 'dotenv';
 import express, { Request, Response } from 'express';
 import session from 'express-session';
 import morgan from 'morgan';
+import passport from 'passport';
 import path from 'path';
 import 'reflect-metadata';
 import { createConnection } from 'typeorm';
+import passportConfig from './passport';
+import authRouter from './routes/auth';
 import pageRouter from './routes/page';
+import postRouter from './routes/post';
+import userRouter from './routes/user';
+
 config({ path: path.resolve(__dirname, '../.env') });
 
 createConnection()
   .then(async connection => {
     // create express app
     const app = express();
+    passportConfig(passport);
 
     app.set('views', path.join(__dirname, 'views'));
     app.set('view engine', 'pug');
@@ -37,8 +44,13 @@ createConnection()
       })
     );
     app.use(flash());
+    app.use(passport.initialize());
+    app.use(passport.session());
 
     app.use('/', pageRouter);
+    app.use('/auth', authRouter);
+    app.use('/post', postRouter);
+    app.use('/user', userRouter);
 
     app.use((req, res, next) => {
       const err = new Error('Not Found');
